@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "depn-desktop",
+    "productName": "Depn Enterprise",
     "version": "0.0.0"
   },
   "tauri": {
@@ -18,18 +18,7 @@
         "execute": true,
         "sidecar": true,
         "open": true,
-        "scope": [
-          {
-            "name": "activate-wireguard",
-            "cmd": "D:\\Code\\depn\\core\\wg-quick.exe",
-            "args": true
-          },
-          {
-            "name": "deactivate-wireguard",
-            "cmd": "D:\\Code\\depn\\core\\wg-quick.exe",
-            "args": true
-          }
-        ]
+        "scope": []
       }
     },
     "bundle": {
@@ -53,9 +42,9 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
-        "title": "depn-desktop",
-        "width": 800,
+        "resizable": false,
+        "title": "Depn Enterprise",
+        "width": 420,
         "height": 600
       }
     ]
