@@ -1,5 +1,7 @@
 #[macro_use] extern crate rocket;
 
+mod db;
+
 #[get("/")]
 fn index() -> &'static str {
     "Hello, world!"
