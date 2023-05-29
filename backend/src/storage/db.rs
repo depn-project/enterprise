@@ -1,4 +1,8 @@
-use super::{repository::Repository, user::User};
+use super::{
+    repository::Repository,
+    server::{Server, ServerDTO},
+    user::User,
+};
 use rusqlite::{params, Connection, Result, NO_PARAMS};
 
 fn create_users_table(conn: &Connection) -> Result<()> {
@@ -63,6 +67,60 @@ impl User for Database {
     fn remove_user(&self, username: String) -> std::result::Result<(), String> {
         self.conn
             .execute("DELETE FROM users WHERE username = ?1", params![username])
+            .unwrap();
+
+        Ok(())
+    }
+}
+
+impl Server for Database {
+    fn create_server(
+        &self,
+        country: String,
+        city: String,
+        vpn_config: String,
+        ip: String,
+        port: u16,
+    ) -> std::result::Result<(), String> {
+        let query = self.conn.execute("INSERT INTO servers (country, city, vpn_config, ip, port) VALUES (?1, ?2, ?3, ?4, ?5, ?6)", params![country, city, vpn_config, ip, port]);
+
+        match query {
+            Ok(_) => Ok(()),
+            Err(_) => Err("Can't create server".to_string()),
+        }
+    }
+
+    fn get_all_servers(&self) -> std::result::Result<Vec<ServerDTO>, String>
+    where
+        Self: Sized,
+    {
+        let stmt = self
+            .conn
+            .prepare("SELECT country, city, ip, port, id FROM servers");
+
+        if let Ok(mut servers) = stmt {
+            let rows = servers
+                .query_map(NO_PARAMS, |row| {
+                    Ok(ServerDTO {
+                        country: row.get(0).unwrap(),
+                        city: row.get(1).unwrap(),
+                        ip: row.get(2).unwrap(),
+                        port: row.get(3).unwrap(),
+                        id: row.get(4).unwrap(),
+                    })
+                })
+                .unwrap();
+            let servers = rows.collect::<Result<Vec<ServerDTO>>>().unwrap();
+
+            return Ok(servers);
+        }
+
+        Err("Can't get all servers".to_string())
+    }
+
+    fn remove_server(&self, id: u32) -> std::result::Result<(), String> {
+        self.conn
+            .execute("DELETE FROM servers WHERE id = ?1", params![id])
             .unwrap();
 
         Ok(())

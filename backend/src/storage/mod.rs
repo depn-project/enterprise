@@ -1,9 +1,11 @@
 pub mod db;
 mod repository;
+mod server;
 mod user;
 
 pub use db::Database;
 pub use repository::Repository;
+pub use server::Server;
 pub use user::User;
 
 pub struct Storage<T: Repository + User> {
