@@ -10,16 +10,21 @@ impl<'a, T: Repository + User> UserService<'a, T> {
         UserService { storage }
     }
 
-    pub fn create(&self, username: String, password: String) {
+    pub fn create(&self, username: String, password: String) -> Result<(), String> {
         let encrypted_password = hash(password, 10).unwrap();
         let user = self
             .storage
             .repository
             .create_user(username.clone(), encrypted_password);
 
-        match user {
-            Ok(_) => println!("[OK] Create user '{}'", username),
-            Err(e) => println!("[ERROR] {}", e),
-        }
+        user
+    }
+
+    pub fn remove(&self, username: String) -> Result<(), String> {
+        self.storage.repository.remove_user(username)
+    }
+
+    pub fn list(&self) -> Result<Vec<String>, String> {
+        self.storage.repository.get_all_users()
     }
 }
