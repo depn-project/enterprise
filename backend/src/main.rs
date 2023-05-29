@@ -1,10 +1,13 @@
 #[macro_use]
 extern crate rocket;
 
+mod args;
 mod server;
 mod storage;
 mod user;
 
+use args::Cli;
+use clap::Parser;
 use storage::{Database, Repository, Storage, User};
 use user::UserService;
 
@@ -13,6 +16,7 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 
+/*
 #[launch]
 fn rocket() -> _ {
     let storage = Storage::new(Database::init().unwrap());
@@ -27,4 +31,9 @@ fn rocket() -> _ {
     }
 
     rocket::build().mount("/", routes![index])
+}
+*/
+
+fn main() {
+    let args = Cli::parse();
 }
