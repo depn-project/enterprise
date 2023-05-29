@@ -5,8 +5,8 @@ mod user;
 
 pub use db::Database;
 pub use repository::Repository;
-pub use server::Server;
-pub use user::User;
+pub use server::{Server, ServerDTO};
+pub use user::{User, UserDTO};
 
 pub struct Storage<T: Repository> {
     pub repository: T,

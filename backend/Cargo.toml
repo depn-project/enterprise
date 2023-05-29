@@ -5,7 +5,14 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "depn"
+path = "src/main.rs"
+
 [dependencies]
 rocket = "=0.5.0-rc.3"
 rusqlite = "0.24.0"
 bcrypt = "0.11.0"
+clap = { version = "4.3.0", features = ["derive"] }
+nix = "0.26.2"
+prettytable = "0.10.0"
