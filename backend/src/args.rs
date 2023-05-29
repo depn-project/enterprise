@@ -3,11 +3,11 @@ use clap::{Parser, Subcommand};
 #[derive(Debug, Parser)]
 pub struct Cli {
     #[command(subcommand)]
-    command: Commands,
+    pub command: Commands,
 }
 
 #[derive(Debug, Subcommand)]
-enum Commands {
+pub enum Commands {
     #[command(subcommand)]
     User(UserCommands),
 
@@ -17,7 +17,7 @@ enum Commands {
 }
 
 #[derive(Debug, Subcommand)]
-enum UserCommands {
+pub enum UserCommands {
     Create { username: String, password: String },
     Remove { username: String },
     Verify { username: String, password: String },
@@ -25,8 +25,19 @@ enum UserCommands {
 }
 
 #[derive(Debug, Subcommand)]
-enum ServerCommands {
-    Create { username: String, password: String },
-    Remove { username: String },
+pub enum ServerCommands {
+    Create {
+        country: String,
+        city: String,
+        vpn_config: String,
+        ip: String,
+        port: u16,
+    },
+    Remove {
+        id: u32,
+    },
     List,
+    Config {
+        id: u32,
+    },
 }

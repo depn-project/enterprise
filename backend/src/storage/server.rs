@@ -11,6 +11,7 @@ pub trait Server {
     fn get_all_servers(&self) -> Result<Vec<ServerDTO>, String>
     where
         Self: Sized;
+    fn get_server_config(&self, id: u32) -> Result<String, String>;
 }
 
 pub struct ServerDTO {

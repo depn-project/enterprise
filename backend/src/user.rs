@@ -1,8 +1,12 @@
-use crate::storage::{Repository, Storage, User};
-use bcrypt::hash;
+use crate::storage::{Repository, Storage, User, UserDTO};
+use bcrypt::{hash, verify};
 
 pub struct UserService<'a, T: Repository + User> {
     storage: &'a Storage<T>,
+}
+
+pub fn verify_password(password: String, hashed_password: String) -> bool {
+    verify(password, &hashed_password).unwrap()
 }
 
 impl<'a, T: Repository + User> UserService<'a, T> {
@@ -26,5 +30,9 @@ impl<'a, T: Repository + User> UserService<'a, T> {
 
     pub fn list(&self) -> Result<Vec<String>, String> {
         self.storage.repository.get_all_users()
+    }
+
+    pub fn get_user(&self, username: String) -> Result<UserDTO, String> {
+        self.storage.repository.get_user(username)
     }
 }

@@ -2,6 +2,7 @@ use super::{
     repository::Repository,
     server::{Server, ServerDTO},
     user::User,
+    UserDTO,
 };
 use rusqlite::{params, Connection, Result, NO_PARAMS};
 
@@ -24,8 +25,8 @@ fn create_servers_table(conn: &Connection) -> Result<()> {
              id INTEGER PRIMARY KEY,
              country TEXT NOT NULL,
              city TEXT NOT NULL,
-             vpn_config TEXT NOT NULL,
-             ip TEXT NOT NULL,
+             vpn_config TEXT NOT NULL UNIQUE,
+             ip TEXT NOT NULL UNIQUE,
              port INTEGER NOT NULL
          )",
         NO_PARAMS,
@@ -71,6 +72,27 @@ impl User for Database {
 
         Ok(())
     }
+
+    fn get_user(&self, username: String) -> std::result::Result<super::UserDTO, String> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT username, password FROM users WHERE username = ?1")
+            .unwrap();
+
+        let mut rows = stmt.query(params![username]).unwrap();
+
+        if let Some(row) = rows.next().unwrap() {
+            let username: String = row.get(0).unwrap();
+            let password: String = row.get(1).unwrap();
+
+            Ok(UserDTO {
+                username: username.clone(),
+                password,
+            })
+        } else {
+            Err(format!("User '{}' not found", username))
+        }
+    }
 }
 
 impl Server for Database {
@@ -82,11 +104,14 @@ impl Server for Database {
         ip: String,
         port: u16,
     ) -> std::result::Result<(), String> {
-        let query = self.conn.execute("INSERT INTO servers (country, city, vpn_config, ip, port) VALUES (?1, ?2, ?3, ?4, ?5, ?6)", params![country, city, vpn_config, ip, port]);
+        let query = self.conn.execute(
+            "INSERT INTO servers (country, city, vpn_config, ip, port) VALUES (?1, ?2, ?3, ?4, ?5)",
+            params![country, city, &vpn_config, ip, port],
+        );
 
         match query {
             Ok(_) => Ok(()),
-            Err(_) => Err("Can't create server".to_string()),
+            Err(e) => Err(e.to_string()),
         }
     }
 
@@ -118,6 +143,22 @@ impl Server for Database {
         Err("Can't get all servers".to_string())
     }
 
+    fn get_server_config(&self, id: u32) -> std::result::Result<String, String> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT vpn_config FROM servers WHERE id = ?1")
+            .unwrap();
+
+        let mut rows = stmt.query(params![id]).unwrap();
+
+        if let Some(row) = rows.next().unwrap() {
+            let config: String = row.get(0).unwrap();
+            Ok(config)
+        } else {
+            Err(format!("Server with ID {} not found", id))
+        }
+    }
+
     fn remove_server(&self, id: u32) -> std::result::Result<(), String> {
         self.conn
             .execute("DELETE FROM servers WHERE id = ?1", params![id])
@@ -129,7 +170,7 @@ impl Server for Database {
 
 impl Repository for Database {
     fn init() -> Result<Self, String> {
-        let conn = Connection::open("database.db");
+        let conn = Connection::open("/var/db/depn.db");
 
         if let Ok(conn) = conn {
             let db = Database { conn };
