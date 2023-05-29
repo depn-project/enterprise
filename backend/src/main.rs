@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
+mod server;
 mod storage;
 mod user;
 
