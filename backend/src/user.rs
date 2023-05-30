@@ -5,6 +5,9 @@ pub struct UserService<'a, T: Repository + User> {
     storage: &'a Storage<T>,
 }
 
+unsafe impl<T: Repository + User> Send for UserService<'_, T> {}
+unsafe impl<T: Repository + User> Sync for UserService<'_, T> {}
+
 pub fn verify_password(password: String, hashed_password: String) -> bool {
     verify(password, &hashed_password).unwrap()
 }
