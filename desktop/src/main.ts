@@ -1,6 +1,7 @@
-import { createApp } from "vue";
-import "@/app/styles.scss";
-import App from "@/app";
-import { i18n } from "@/shared/lib/i18n";
+import App from "./app/App.svelte";
 
-createApp(App).use(i18n).mount("#app");
+const app = new App({
+  target: document.getElementById("app"),
+});
+
+export default app;

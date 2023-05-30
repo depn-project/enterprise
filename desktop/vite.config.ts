@@ -1,15 +1,24 @@
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import path from "path";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import sveltePreprocess from "svelte-preprocess";
+import * as path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [vue()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
+  plugins: [
+    svelte({
+      preprocess: [
+        sveltePreprocess({
+          typescript: true,
+        }),
+      ],
+    }),
+  ],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors

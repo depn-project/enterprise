@@ -9,6 +9,11 @@ use crate::server::ServerService;
 use crate::storage::{Database, Repository, Storage};
 use crate::user::{verify_password, UserService};
 
+#[get("/")]
+async fn index() -> impl Responder {
+    HttpResponse::Ok()
+}
+
 #[get("/server/{id}")]
 async fn server_config(path: web::Path<u32>) -> impl Responder {
     let storage = Storage::new(Database::init().unwrap());
@@ -72,6 +77,7 @@ pub async fn run_web_server() -> std::io::Result<()> {
 
         App::new()
             .wrap(auth)
+            .service(index)
             .service(servers)
             .service(server_config)
     })

@@ -1,9 +1,11 @@
-import { createI18n } from "vue-i18n";
-import { messages } from "./messages";
+import { init, addMessages } from "svelte-i18n";
+import be from "./be.json";
+import en from "./en.json";
 
-export const i18n = createI18n({
-  legacy: false,
-  locale: "be",
+addMessages("be", be);
+addMessages("en", en);
+
+init({
   fallbackLocale: "be",
-  messages,
+  initialLocale: "be",
 });

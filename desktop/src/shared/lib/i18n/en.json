@@ -1,0 +1,27 @@
+{
+  "feature": {
+    "setup": {
+      "header": "Client setup",
+      "label": {
+        "ip": "IP-address",
+        "port": "Port",
+        "username": "Username",
+        "password": "Password"
+      },
+      "error": {
+        "ip": {
+          "required": "Required field"
+        },
+        "port": {
+          "required": "Required field"
+        },
+        "username": {
+          "required": "Required field"
+        },
+        "password": {
+          "required": "Required field"
+        }
+      }
+    }
+  }
+}
