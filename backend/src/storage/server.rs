@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 pub trait Server {
     fn create_server(
         &self,
@@ -14,6 +16,7 @@ pub trait Server {
     fn get_server_config(&self, id: u32) -> Result<String, String>;
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ServerDTO {
     pub country: String,
     pub city: String,
