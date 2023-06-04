@@ -14,6 +14,8 @@
   import { form, field } from "svelte-forms";
   import { required } from "svelte-forms/validators";
   import { ipv4, port as portValidator } from "@/shared/lib/forms/validators";
+  import axios from "axios";
+  import { push } from "svelte-spa-router";
 
   const ip = field("ip", "", [required(), ipv4()]);
   const port = field("port", "", [required(), portValidator()]);
@@ -49,10 +51,25 @@
     if ($setupForm.errors.length) return;
     loading = true;
 
-    setTimeout(() => {
-      loading = false;
+    try {
+      await axios.get(`http://${$ip.value}:${$port.value}/`, {
+        auth: {
+          username: $username.value,
+          password: $password.value,
+        },
+      });
+
+      localStorage.setItem("ip", $ip.value);
+      localStorage.setItem("port", $port.value);
+      localStorage.setItem("username", $username.value);
+      localStorage.setItem("password", $password.value);
+
+      push("/servers");
+    } catch (e) {
       error = true;
-    }, 2000);
+    }
+
+    loading = false;
   };
 </script>
 
@@ -110,7 +127,7 @@
         <div class="button-container">
           <ButtonSet>
             <Button kind="secondary" on:click={handleClickSecondary}>
-              {$_("feature.setup.button.secondary")}
+              {$_("feature.setup.button.clear")}
             </Button>
             {#if loading}
               <InlineLoading
@@ -137,6 +154,7 @@
 
     .fields-container {
       padding: 1rem;
+      padding-top: 0;
 
       :global(.bx--label) {
         font-size: 0.875rem;
@@ -144,7 +162,6 @@
 
       .heading-container {
         margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
         padding-bottom: 1rem;
 
         .heading {

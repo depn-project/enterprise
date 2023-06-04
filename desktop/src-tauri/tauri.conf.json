@@ -11,17 +11,32 @@
     "version": "0.0.0"
   },
   "tauri": {
+    "security": {
+      "csp": null
+    },
     "allowlist": {
       "all": false,
       "shell": {
-        "all": false,
+        "scope": [
+          {
+            "name": "wg-quick",
+            "cmd": "wg-quick",
+            "args": ["up", "depn"]
+          }
+        ],
+        "all": true,
+        "execute": true,
+        "sidecar": true,
         "open": true
+      },
+      "http": {
+        "all": true
       }
     },
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "io.depn",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -29,9 +44,6 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ]
-    },
-    "security": {
-      "csp": null
     },
     "windows": [
       {

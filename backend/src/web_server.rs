@@ -1,6 +1,11 @@
+use std::option;
+
+use actix_cors::Cors;
 use actix_web::dev::ServiceRequest;
 use actix_web::error::ErrorUnauthorized;
-use actix_web::{get, web, App, HttpResponse, HttpServer};
+use actix_web::http::header;
+use actix_web::middleware::DefaultHeaders;
+use actix_web::{get, http, options, web, App, HttpResponse, HttpServer};
 use actix_web::{Error, Responder};
 use actix_web_httpauth::extractors::basic::BasicAuth;
 use actix_web_httpauth::middleware::HttpAuthentication;
@@ -75,8 +80,34 @@ pub async fn run_web_server() -> std::io::Result<()> {
             })
         };
 
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allowed_methods([http::Method::GET])
+            .allowed_headers([header::AUTHORIZATION, header::CONTENT_TYPE])
+            .max_age(86_400);
+
+        let security_headers = DefaultHeaders::new()
+            .header(
+                header::STRICT_TRANSPORT_SECURITY,
+                "max-age=3153600 ; includeSubDomains",
+            )
+            .header(header::X_FRAME_OPTIONS, "deny")
+            .header(header::X_CONTENT_TYPE_OPTIONS, "nosniff")
+            .header(
+                header::CONTENT_SECURITY_POLICY,
+                "default-src 'self'; frame-ancestors 'none';",
+            )
+            .header(
+                header::CACHE_CONTROL,
+                "no-cache, no-store, max-age=0, must-revalidate",
+            )
+            .header(header::PRAGMA, "no-cache")
+            .header(header::EXPIRES, "0");
+
         App::new()
             .wrap(auth)
+            .wrap(cors)
+            .wrap(security_headers)
             .service(index)
             .service(servers)
             .service(server_config)

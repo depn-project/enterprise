@@ -2,7 +2,11 @@
   import SetupFeature from "@/features/Setup";
 </script>
 
-<SetupFeature />
+<div class="setup-page">
+  <SetupFeature />
+</div>
 
 <style scoped>
+  .setup-page {
+  }
 </style>
